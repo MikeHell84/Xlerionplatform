@@ -1,0 +1,193 @@
+=================================================
+ PROMPT GENERADOR DE SITIO - Ultimate Website
+=================================================
+
+**OBJETIVO:**
+Crear un proyecto web completo desde cero llamado "Ultimate Website". El proyecto consiste en un backend con Node.js/Express que sirve una API RESTful, y dos frontends: un sitio público dinámico y un panel de administración completo para gestionar todo el contenido.
+
+---
+**1. ESTRUCTURA Y TECNOLOGÍAS**
+---
+
+- **Backend:** Node.js, Express, `mysql2/promise`, `jsonwebtoken`, `bcryptjs`, `nodemailer`, `mysqldump`, `multer`, `node-cron`, `helmet`, `cors`, `dotenv`.
+- **Frontend (Admin):** HTML, CSS, y JavaScript modular (ESM). Usar Chart.js para gráficos y TinyMCE para edición de texto.
+- **Frontend (Público):** HTML, CSS, y JavaScript modular (ESM).
+- **Base de Datos:** MySQL o MariaDB.
+- **Estructura de Carpetas:**
+  /backend
+    /config
+    /controllers
+    /middleware
+    /routes
+    /services
+    /public/uploads
+    /backups
+  /frontend
+    /admin
+    /assets
+      /css
+      /js
+      /images
+
+---
+**2. CONFIGURACIÓN INICIAL Y .ENV**
+---
+
+Crea un archivo `.env` en la raíz de la carpeta `/backend` con el siguiente contenido, reemplazando los valores con tus credenciales:
+
+```
+# Credenciales de la Base de Datos
+DB_HOST="xlerion.com"
+DB_USER="xlerionc_xdata"
+DB_PASSWORD="81720164Mike!1984"
+DB_NAME="xlerionc_xlerion"
+
+# Secreto para los JSON Web Tokens (JWT)
+JWT_SECRET="tu_secreto_super_seguro_aqui"
+
+# URL del servicio Ollama (si se usa ngrok)
+OLLAMA_API_URL="http://<id_de_ngrok>.ngrok-free.app/api/generate"
+
+# Clave de API de OpenAI (alternativa a Ollama)
+OPENAI_API_KEY="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"
+```
+
+---
+**3. BASE DE DATOS (SCRIPT SQL)**
+---
+
+Ejecuta el siguiente script en tu cliente de MySQL para crear toda la estructura de la base de datos y los datos iniciales necesarios.
+
+```sql
+-- Elimina las tablas si ya existen para asegurar un estado limpio.
+-- ¡CUIDADO! Esto borrará los datos existentes en estas tablas.
+DROP TABLE IF EXISTS `page_views`, `comments`, `posts`, `sections`, `social_links`, `content_blocks`, `site_settings`, `users`, `languages`, `translations`;
+
+CREATE TABLE `users` ( `id` int(11) NOT NULL AUTO_INCREMENT, `name` varchar(255) NOT NULL, `email` varchar(255) NOT NULL, `password` varchar(255) NOT NULL, `role` enum('admin','editor') NOT NULL DEFAULT 'editor', `created_at` timestamp NOT NULL DEFAULT current_timestamp(), PRIMARY KEY (`id`), UNIQUE KEY `email` (`email`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+CREATE TABLE `sections` ( `id` int(11) NOT NULL AUTO_INCREMENT, `name` varchar(255) NOT NULL, `slug` varchar(255) NOT NULL, `icon` varchar(100) DEFAULT NULL, `description` text DEFAULT NULL, `status` enum('active','inactive') NOT NULL DEFAULT 'inactive', PRIMARY KEY (`id`), UNIQUE KEY `slug` (`slug`), UNIQUE KEY `name` (`name`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+CREATE TABLE `posts` ( `id` int(11) NOT NULL AUTO_INCREMENT, `section_id` int(11) NOT NULL, `title` json DEFAULT NULL, `content` text DEFAULT NULL, `post_data` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`post_data`)), `smart_summary` text DEFAULT NULL, `status` enum('published','draft','scheduled') NOT NULL DEFAULT 'draft', `publish_at` datetime DEFAULT NULL, `created_at` timestamp NOT NULL DEFAULT current_timestamp(), PRIMARY KEY (`id`), KEY `section_id` (`section_id`), CONSTRAINT `posts_ibfk_1` FOREIGN KEY (`section_id`) REFERENCES `sections` (`id`) ON DELETE CASCADE ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+CREATE TABLE `comments` ( `id` int(11) NOT NULL AUTO_INCREMENT, `post_id` int(11) NOT NULL, `author_name` varchar(255) NOT NULL, `content` text NOT NULL, `status` enum('pending','approved','rejected') NOT NULL DEFAULT 'pending', `created_at` timestamp NOT NULL DEFAULT current_timestamp(), PRIMARY KEY (`id`), KEY `post_id` (`post_id`), CONSTRAINT `comments_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`) ON DELETE CASCADE ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+CREATE TABLE `site_settings` ( `setting_key` varchar(255) NOT NULL, `setting_value` text DEFAULT NULL, PRIMARY KEY (`setting_key`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+CREATE TABLE `social_links` ( `id` int(11) NOT NULL AUTO_INCREMENT, `name` varchar(255) NOT NULL, `url` varchar(255) NOT NULL, `icon_class` varchar(100) NOT NULL, PRIMARY KEY (`id`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+CREATE TABLE `content_blocks` ( `id` int(11) NOT NULL AUTO_INCREMENT, `type` varchar(50) NOT NULL, `title` json DEFAULT NULL, `content` json DEFAULT NULL, `image_url` varchar(255) DEFAULT NULL, `cta_text` json DEFAULT NULL, `cta_link` varchar(255) DEFAULT NULL, `is_active` tinyint(1) NOT NULL DEFAULT 1, `sort_order` int(11) NOT NULL DEFAULT 0, `background_color` varchar(20) DEFAULT '#ffffff', `text_color` varchar(20) DEFAULT '#212529', PRIMARY KEY (`id`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+CREATE TABLE `page_views` ( `section_id` int(11) NOT NULL, `view_date` date NOT NULL, `view_count` int(11) NOT NULL DEFAULT 1, PRIMARY KEY (`section_id`,`view_date`), CONSTRAINT `page_views_ibfk_1` FOREIGN KEY (`section_id`) REFERENCES `sections` (`id`) ON DELETE CASCADE ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+CREATE TABLE `languages` ( `code` varchar(10) NOT NULL, `name` varchar(50) NOT NULL, `is_default` tinyint(1) NOT NULL DEFAULT 0, PRIMARY KEY (`code`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+CREATE TABLE `translations` ( `id` int(11) NOT NULL AUTO_INCREMENT, `lang_code` varchar(10) NOT NULL, `translation_key` varchar(255) NOT NULL, `translation_value` text NOT NULL, PRIMARY KEY (`id`), UNIQUE KEY `lang_key_unique` (`lang_code`,`translation_key`), KEY `lang_code` (`lang_code`), CONSTRAINT `translations_ibfk_1` FOREIGN KEY (`lang_code`) REFERENCES `languages` (`code`) ON DELETE CASCADE ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO `site_settings` (`setting_key`, `setting_value`) VALUES
+('background_color', '#ffffff'), ('border_radius', '8'), ('font_family', '-apple-system, BlinkMacSystemFont, ''Segoe UI'', Roboto, ''Helvetica Neue'', Arial, sans-serif'), ('footer_text', '© 2024 Tu Empresa. Todos los derechos reservados.'), ('hero_background_image', NULL), ('hero_cta_link', '#'), ('hero_cta_text', 'Saber Más'), ('hero_subtitle', 'Tu eslogan increíble va aquí.'), ('hero_title', 'Bienvenido a Tu Sitio Web'), ('primary_color', '#007bff'), ('secondary_color', '#6c757d'), ('site_logo', NULL), ('site_title', 'Mi Sitio Web'), ('text_color', '#212529');
+
+INSERT INTO `languages` (`code`, `name`, `is_default`) VALUES ('es', 'Español', 1), ('en', 'English', 0);
+
+INSERT INTO `translations` (`lang_code`, `translation_key`, `translation_value`) VALUES
+('es', 'welcome_message', 'Bienvenido a Nuestro Sitio'), ('es', 'explore_sections', 'Explora nuestras secciones para descubrir más.'), ('es', 'contact_us', 'Contáctanos'),
+('en', 'welcome_message', 'Welcome to Our Site'), ('en', 'explore_sections', 'Explore our sections to discover more.'), ('en', 'contact_us', 'Contact Us');
+```
+
+---
+**4. BACKEND**
+---
+
+1.  **Servidor (`server.js`):**
+    - Configurar Express con middlewares de seguridad (CORS, Helmet con CSP).
+    - Servir los frontends (público y admin) como archivos estáticos.
+    - Registrar las rutas de la API (`/api` y `/api/public`).
+    - Implementar un cron job que se ejecute cada minuto para publicar posts programados.
+
+2.  **API RESTful:**
+    - **Rutas Públicas (`/api/public`):** Endpoints para obtener configuraciones, menú, bloques, traducciones, posts, etc., sin necesidad de autenticación.
+    - **Rutas Protegidas (`/api`):** Endpoints para la gestión desde el panel de admin, protegidos con JWT.
+
+3.  **Autenticación y Seguridad:**
+    - Crear endpoints para registro y login (`/api/users/register`, `/api/users/login`).
+    - Generar tokens JWT al iniciar sesión.
+    - Crear middleware `protect` para verificar el token en rutas protegidas.
+    - Crear middleware `authorizeAdmin` para restringir rutas a usuarios con rol 'admin'.
+
+4.  **Sistema de Caché (`cacheService.js`):**
+    - Implementar un sistema de caché en memoria (NodeCache) para reducir las consultas a la base de datos en endpoints públicos.
+    - Crear endpoints en el admin para limpiar la caché (`/api/cache/clear-all`, `/api/cache/clear-specific`).
+
+5.  **Internacionalización (i18n):**
+    - Endpoints para gestionar idiomas (CRUD).
+    - Endpoints para obtener y actualizar las cadenas de traducción por idioma.
+    - Los campos de texto principales en `posts` y `content_blocks` deben ser de tipo JSON para almacenar las traducciones.
+
+6.  **Módulos de Gestión (Controladores y Rutas):**
+    - **Posts:** CRUD completo, paginación, búsqueda por título.
+    - **Secciones:** CRUD para la estructura del sitio.
+    - **Bloques de Contenido:** CRUD completo y un endpoint para reordenarlos.
+    - **Usuarios:** CRUD de usuarios con gestión de roles.
+    - **Configuración (Settings):** Endpoints para obtener/actualizar configuraciones, subir logo e imagen de hero, y restaurar valores por defecto.
+    - **Backups:** Endpoints para crear, listar, descargar y restaurar backups de la base de datos.
+    - **SEO:** Endpoint para generar un `sitemap.xml`.
+    - **Email:** Endpoints para guardar configuración SMTP y enviar un email de prueba.
+    - **Comentarios:** Endpoints para listar, aprobar y eliminar comentarios.
+
+7.  **Integración con IA (`aiService.js`):**
+    - Crear un servicio para conectarse a una API de Ollama.
+    - Implementar una función `generateSmartSummary` que tome el contenido de un post y genere un resumen corto y atractivo.
+    - Integrar esta función en la creación/actualización de posts para guardar el resumen en la base de datos.
+
+---
+**5. FRONTEND - PANEL DE ADMINISTRACIÓN (`/admin`)**
+---
+
+1.  **Estructura:**
+    - Crear una Single Page Application (SPA) con navegación por pestañas.
+    - El acceso debe estar protegido por un formulario de login.
+    - El diseño debe ser responsivo.
+
+2.  **Dashboard:**
+    - Mostrar tarjetas con estadísticas (posts, comentarios, etc.).
+    - Implementar gráficos con Chart.js para: visitas, posts por categoría y posts por comentarios.
+    - Añadir un botón para refrescar los datos sin recargar la página.
+
+3.  **Pestañas de Gestión:**
+    - **Estructura:** Interfaz de tarjetas para activar/desactivar secciones del sitio.
+    - **Contenido:** Formulario dinámico que cambia según la sección seleccionada. Los campos de texto (título, descripción) deben generarse para cada idioma disponible. Usar TinyMCE como editor de texto enriquecido.
+    - **Bloques Portada:** Interfaz para gestionar los bloques de la página principal con soporte para reordenamiento (drag-and-drop) y campos de texto multilingües.
+    - **Apariencia:** Panel para personalizar colores, logo, tipografía, etc., con vista previa.
+    - **Interacción:** Panel para moderar comentarios (aprobar/eliminar).
+    - **Usuarios:** CRUD de usuarios con un selector para asignar roles ('admin' o 'editor').
+    - **Copias de Seguridad:** Interfaz para crear, descargar, listar y restaurar backups.
+    - **SEO:** Panel para editar metadatos globales y generar el sitemap.
+    - **Email:** Formulario para configurar y probar los ajustes SMTP.
+    - **Caché:** Botones para limpiar la caché del servidor.
+    - **Internacionalización:** Panel para añadir/eliminar idiomas y editar las cadenas de traducción.
+
+4.  **Permisos de UI:**
+    - Ocultar las pestañas de gestión avanzada (Usuarios, Estructura, Backups, SEO, etc.) para los usuarios que no tengan el rol de 'admin'.
+
+---
+**6. FRONTEND - SITIO PÚBLICO (`/`)**
+---
+
+1.  **Contenido Dinámico:**
+    - La página debe cargar dinámicamente desde la API pública:
+        - El menú de navegación.
+        - El logo, título y texto del pie de página.
+        - Los colores y estilos personalizados.
+        - El contenido de la sección "hero" (título, subtítulo, imagen).
+        - Los bloques de contenido personalizados.
+
+2.  **Internacionalización (i18n):**
+    - Añadir un selector de idioma en la cabecera.
+    - Al cambiar de idioma, el texto de la página (títulos, párrafos, etc.) debe actualizarse dinámicamente consumiendo las traducciones de la API.
+    - La preferencia de idioma del usuario debe guardarse en `localStorage`.
+
+3.  **Experiencia de Usuario:**
+    - Implementar un interruptor para modo oscuro/claro.
+    - Añadir un botón "Volver Arriba".
+    - Implementar scroll infinito para cargar más contenido en las vistas de sección.
+    - Añadir un formulario de búsqueda funcional.
+
+---
+**7. HERRAMIENTAS DE DESARROLLO Y MODELOS**
+---
+
+- **Postman:** Utilizado para probar y depurar los endpoints de la API RESTful durante el desarrollo.
+- **Ollama:** Servicio para ejecutar localmente los modelos de lenguaje grande (LLM) como 'llama3', utilizado por el `aiService.js` para la generación de resúmenes inteligentes.
+- **VS Code Live Server (o similar):** Utilizado para servir el frontend durante el desarrollo, lo que requiere una configuración de CORS y el uso de URLs absolutas en las peticiones a la API del backend.
+    - Implementar scroll infinito para cargar más contenido en las vistas de sección.
+    - Añadir un formulario de búsqueda funcional.

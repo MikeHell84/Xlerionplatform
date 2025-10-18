@@ -1,0 +1,144 @@
+=================================================
+ BITÁCORA DE DESARROLLO - Ultimate Website
+=================================================
+
+Fecha de Creación: [Fecha Actual]
+
+Este documento resume el estado actual y las funcionalidades implementadas en el proyecto.
+
+
+---
+I. ARQUITECTURA GENERAL
+---
+
+- **Backend:** Construido con Node.js y Express.js, sirviendo una API RESTful.
+- **Frontend (Público):** Página principal dinámica que consume datos de la API.
+- **Frontend (Admin):** Panel de administración completo (SPA) para gestionar todo el contenido del sitio.
+- **Base de Datos:** MySQL, con un pool de conexiones para mayor eficiencia.
+- **Caché:** Sistema de caché en memoria (NodeCache) para optimizar el rendimiento de las consultas a la base de datos.
+- **Seguridad:** Implementación de CORS, Helmet (con CSP), autenticación por tokens JWT y sistema de roles.
+
+
+---
+II. FUNCIONALIDADES DEL BACKEND
+---
+
+1.  **API RESTful:**
+    - Endpoints públicos (`/api/public`) para servir contenido al sitio principal (configuración, menú, bloques, traducciones).
+    - Endpoints protegidos (`/api`) para la gestión desde el panel de administración.
+
+2.  **Autenticación y Roles:**
+    - Sistema de registro y login de usuarios.
+    - Middleware `protect` para asegurar rutas con token JWT.
+    - Middleware `authorizeAdmin` para restringir el acceso a funcionalidades críticas solo para administradores.
+    - Roles implementados: 'admin' y 'editor'.
+
+3.  **Integración con IA (Ollama):**
+    - Servicio `aiService.js` para comunicarse con modelos de IA locales (ej. Llama 3).
+    - Generación automática de "Resúmenes Inteligentes" para los posts.
+
+4.  **Gestión de Contenido (Multilingüe):**
+    - **Posts:** CRUD completo, paginación, búsqueda por título. Los títulos y campos de contenido son multilingües (almacenados como JSON).
+    - **Bloques de Portada:** CRUD completo, reordenamiento (drag-and-drop). Los campos de texto son multilingües.
+    - **Secciones:** Gestión de la estructura del sitio, activación/desactivación de secciones.
+
+5.  **Automatización:**
+    - Cron job que se ejecuta cada minuto para publicar automáticamente los posts programados.
+
+6.  **Módulos de Administración:**
+    - **Usuarios:** CRUD de usuarios y asignación de roles.
+    - **Copias de Seguridad:** Creación, listado, descarga y restauración de backups de la base de datos.
+    - **SEO:** Generación de `sitemap.xml` y gestión de metadatos globales.
+    - **Email:** Configuración de servidor SMTP y envío de emails de prueba.
+    - **Caché:** Endpoints para limpiar la caché del servidor (total o por partes).
+    - **Internacionalización (i18n):** Gestión de idiomas y edición de cadenas de traducción.
+
+
+---
+III. FUNCIONALIDADES DEL FRONTEND (PANEL DE ADMINISTRACIÓN)
+---
+
+1.  **Interfaz Modular y Responsiva:**
+    - Panel de una sola página (SPA) con navegación por pestañas.
+    - Diseño adaptable a dispositivos móviles.
+    - Modo oscuro con persistencia en `localStorage`.
+
+2.  **Dashboard Principal:**
+    - Tarjetas con estadísticas en tiempo real (posts, comentarios, secciones).
+    - Gráficos dinámicos (Chart.js) para visualizar:
+        - Visitas por día (últimos 30 días).
+        - Posts por categoría.
+        - Posts con más comentarios.
+    - Esqueleto de carga (loading skeleton) para una mejor experiencia de usuario.
+    - Botón para refrescar los datos del dashboard sin recargar la página.
+
+3.  **Paneles de Gestión:**
+    - **Estructura:** Interfaz de tarjetas para activar/desactivar secciones del sitio.
+    - **Contenido:** Creación y edición de posts con formularios dinámicos que se adaptan a la sección y al idioma. Editor de texto enriquecido (TinyMCE).
+    - **Bloques Portada:** Gestión de bloques de contenido de la página principal con reordenamiento (drag-and-drop) y campos multilingües.
+    - **Apariencia:** Personalización visual del sitio (colores, logo, imagen de hero, tipografía) con vista previa.
+    - **Interacción:** Panel para moderar comentarios (aprobar/eliminar).
+    - **Conexiones:** Gestión de enlaces a redes sociales.
+    - **Usuarios:** Panel para crear, editar y eliminar usuarios, con asignación de roles.
+    - **Copias de Seguridad:** Interfaz para crear, descargar y restaurar backups.
+    - **SEO:** Panel para gestionar metadatos y generar el sitemap.
+    - **Email:** Formulario para configurar los ajustes SMTP.
+    - **Caché:** Botones para limpiar la caché del servidor.
+    - **Internacionalización:** Gestión de idiomas y edición de traducciones.
+
+4.  **Restricciones por Rol:**
+    - Los usuarios con rol 'editor' no pueden ver las pestañas "Usuarios", "Estructura", "Copias de Seguridad", "SEO", "Email", "Caché" e "Internacionalización".
+
+
+---
+V. ESTRATEGIA DE DESARROLLO: CHECKPOINTS
+---
+
+Para asegurar un desarrollo estable y minimizar riesgos al implementar nuevas funcionalidades complejas, se ha adoptado una estrategia de "checkpoints" o puntos de guardado.
+
+1.  **Creación de un Checkpoint:**
+    - Antes de solicitar una nueva funcionalidad, se puede pedir: "Crea un checkpoint del desarrollo que llevamos hasta ahora".
+    - El asistente confirmará que el estado actual del proyecto es estable y ha sido "guardado" conceptualmente.
+
+2.  **Restauración de un Checkpoint:**
+    - Si una nueva implementación introduce errores o problemas inesperados, se puede solicitar: "Restaura el último checkpoint".
+    - Esto revertirá el código al último estado estable guardado, permitiendo un nuevo enfoque para la funcionalidad deseada.
+
+**Nota:** Este es un acuerdo de flujo de trabajo con el asistente de IA para simular un control de versiones simple y ágil durante la sesión de desarrollo.
+
+
+---
+**CHECKPOINTS CREADOS**
+---
+
+1.  **Nombre:** `Checkpoint: Estandarización Completa a ES Modules`
+    - **Estado:** El proyecto es completamente estable. Todo el backend ha sido refactorizado para usar ES Modules (import/export), eliminando todos los errores de incompatibilidad de módulos. El servidor arranca correctamente y todas las rutas de la API están operativas.
+
+2.  **Nombre:** `Checkpoint: Post-Implementación de Reseteo de Contraseña`
+    - **Estado:** El proyecto es estable. Se ha implementado y depurado completamente la funcionalidad de "Olvidé mi contraseña", incluyendo el envío de correos y la actualización segura de la contraseña.
+
+3.  **Nombre:** `Checkpoint: Estabilización del Panel y Log de Actividad`
+    - **Estado:** El proyecto es estable. Se solucionaron errores críticos en el arranque del panel de administración (error 401 y de sintaxis) al refactorizar la carga inicial de datos. Se implementó la tabla `activity_log` para registrar las acciones de los usuarios, solucionando un error en el backend.
+
+4.  **Nombre:** `Checkpoint: Conexión Frontend-Backend y Flujo de Desarrollo`
+    - **Estado:** El proyecto es estable. Se ha establecido con éxito la conexión entre el panel de administración y el sitio público. El menú y el contenido se generan dinámicamente. Se ha definido y documentado un flujo de trabajo de desarrollo robusto utilizando `live-server` para el frontend, solucionando problemas de CORS y recarga automática. Se han corregido errores de enrutamiento y caché en el backend.
+
+
+---
+IV. FUNCIONALIDADES DEL FRONTEND (SITIO PÚBLICO)
+---
+
+1.  **Contenido Dinámico:**
+    - El menú, el logo, los colores, el pie de página y todo el contenido se cargan dinámicamente desde la API.
+    - La página de inicio muestra bloques de contenido personalizados y un resumen inteligente.
+
+2.  **Internacionalización (i18n):**
+    - Selector de idioma en la cabecera.
+    - El contenido estático y dinámico (títulos, descripciones) se traduce automáticamente según el idioma seleccionado.
+    - La preferencia de idioma se guarda en `localStorage`.
+
+3.  **Experiencia de Usuario:**
+    - Modo oscuro.
+    - Botón "Volver Arriba".
+    - Scroll infinito para cargar más posts en las vistas de sección y búsqueda.
+    - Formulario de búsqueda funcional.

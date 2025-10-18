@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompts de IA Utilizados en el Proyecto</title>
+    <style>
+        body { font-family: sans-serif; line-height: 1.6; margin: 20px; }
+        h1 { color: #333; }
+        .prompt-container {
+            background-color: #f4f4f4;
+            border-left: 5px solid #007bff;
+            padding: 15px;
+            margin-bottom: 20px;
+            white-space: pre-wrap; /* Mantiene los saltos de línea y espacios */
+            font-family: monospace;
+        }
+        h2 { border-bottom: 2px solid #eee; padding-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Registro de Prompts de IA</h1>
+
+    <h2>1. Generación de Resumen Inteligente (Smart Summary)</h2>
+    <p><strong>Ubicación:</strong> <code>backend/services/aiService.js</code></p>
+    <p><strong>Objetivo:</strong> Crear un resumen corto y atractivo de un texto, ideal para mostrar en la portada o en vistas previas.</p>
+    <div class="prompt-container">
+Por favor, genera un resumen conciso y atractivo de 1 o 2 frases para el siguiente texto, optimizado para ser mostrado en la portada de un sitio web:
+
+"${content}"
+    </div>
+
+    <h2>Prompts para el Asistente de Código (Gemini)</h2>
+    <p><strong>Objetivo:</strong> Documentar las instrucciones dadas al asistente de IA que resultaron en funcionalidades exitosas para el proyecto.</p>
+
+    <h3>2. Implementar Sistema de Comentarios</h3>
+    <div class="prompt-container">
+Implementa un sistema de comentarios para los posts.
+    </div>
+
+    <h3>3. Implementar Modo Oscuro</h3>
+    <div class="prompt-container">
+Implementa un modo oscuro que se pueda activar con un interruptor en la cabecera.
+    </div>
+
+    <h3>4. Implementar Botón "Volver Arriba"</h3>
+    <div class="prompt-container">
+Implementa un botón de "volver arriba" que aparezca al hacer scroll hacia abajo.
+    </div>
+
+    <h3>5. Implementar Scroll Infinito</h3>
+    <div class="prompt-container">
+Implementa un "scroll infinito" para cargar más posts automáticamente al llegar al final de la página.
+    </div>
+
+    <h3>6. Implementar Notificaciones por Email</h3>
+    <div class="prompt-container">
+Implementa un sistema de notificaciones por email cuando se recibe un nuevo comentario.
+    </div>
+
+    <h3>7. Moderar Comentarios</h3>
+    <div class="prompt-container">
+Modera los comentarios desde el panel de administración (aprobar/eliminar).
+    </div>
+
+    <h3>8. Corregir Error de Base de Datos (Tabla Inexistente)</h3>
+    <div class="prompt-container">
+[Error Log Proporcionado por el Usuario]
+code: 'ER_NO_SUCH_TABLE',
+...
+sqlMessage: "Table 'xlerionc_xlerion.comments' doesn't exist"
+    </div>
+
+    <h3>9. Crear Página de Contacto</h3>
+    <div class="prompt-container">
+Crea una página de "Contacto" con un formulario que envíe los mensajes por email.
+    </div>
+
+    <h3>10. Implementar Gestión Visual Avanzada</h3>
+    <div class="prompt-container">
+Agrega un módulo de gestión visual desde el panel de administración. Este módulo debe permitir al usuario ajustar estilos, colores, tipografías, imágenes de fondo, íconos y estructura visual del sitio sin modificar el código directamente.
+
+Los cambios deben guardarse en la base de datos (tabla `site_settings`) y reflejarse en tiempo real en el frontend. Incluye una interfaz intuitiva en el panel admin, con vista previa de los cambios y opción de restaurar estilos por defecto.
+    </div>
+
+    <h3>11. Implementar Gestión de Secciones por Tarjetas</h3>
+    <div class="prompt-container">
+agrega paneles o tarjetas para editar cada seccion en el dashboard del administrador, si una seccion tiene mas de 1 entrada, esta debe aparecer en el frontend del usurio, y en el menu principal superior.
+
+Lista sugerida de secciones disponibles:
+- Inicio
+- Servicios
+- Proyectos
+- ... (etc)
+
+Incluye:
+- Formulario para activar/desactivar secciones
+- Vista previa del menú generado
+- Guardado en la tabla `sections` con campos: `name`, `icon`, `description`, `status`
+- Endpoint `/api/sections` para gestión dinámica
+- Middleware para validar duplicados y entradas vacías
+    </div>
+
+    <hr>
+
+    <h2>Estrategia de Desarrollo: Checkpoints</h2>
+    <p><strong>Objetivo:</strong> Establecer un punto de guardado o "checkpoint" antes de implementar una nueva funcionalidad compleja. Si la implementación falla, podemos revertir fácilmente al estado funcional anterior.</p>
+    <p><strong>Proceso Sugerido:</strong></p>
+    <ol>
+        <li>Antes de solicitar una nueva funcionalidad (ej. "Implementa X"), se puede solicitar: "Crea un checkpoint del estado actual del proyecto".</li>
+        <li>El asistente confirmará que el estado actual es estable y está "guardado".</li>
+        <li>Se procede con la nueva implementación.</li>
+        <li>Si la nueva funcionalidad introduce errores difíciles de resolver, se puede solicitar: "Restaura el último checkpoint".</li>
+    </ol>
+    <p><em>Nota: Este es un acuerdo de flujo de trabajo entre el usuario y el asistente de IA para simular un control de versiones simple durante la sesión de desarrollo.</em></p>
+
+</body>
+</html>

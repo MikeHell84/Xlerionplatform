@@ -1,0 +1,114 @@
+/* frontend/admin/css/specifics.css */
+
+/* --- Moderación de Comentarios --- */
+.comment-moderation-item {
+    border-left: 4px solid #ffc107; /* Amarillo para pendiente */
+    padding: 10px;
+    margin-bottom: 10px;
+    background: #fffbe6;
+}
+.comment-moderation-item.approved {
+    border-left-color: #28a745; /* Verde para aprobado */
+    background: #f0fff4;
+}
+.comment-moderation-item p {
+    margin: 5px 0;
+}
+.comment-moderation-item .comment-meta {
+    font-size: 0.8em;
+    color: #6c757d;
+}
+
+/* --- Cabecera de la lista de Posts --- */
+#posts-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* --- Items de FAQ en el admin --- */
+.faq-item {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    position: relative;
+    padding-left: 35px; /* Espacio para el drag handle */
+}
+.faq-item input, .faq-item textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 5px;
+    box-sizing: border-box;
+}
+.faq-item button {
+    background-color: #dc3545;
+}
+.faq-item .drag-handle {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: grab;
+    color: #aaa;
+}
+
+/* --- Editor de Columnas en el admin --- */
+#column-textareas-container {
+    display: grid;
+    gap: 15px;
+    margin-top: 15px;
+}
+.column-editor-item textarea {
+    width: 100%;
+    min-height: 150px;
+}
+
+/* --- Previsualización de Galería --- */
+.gallery-preview-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+.gallery-preview-item {
+    position: relative;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: grab;
+}
+.gallery-preview-item img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+}
+.remove-gallery-image-btn {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background-color: rgba(220, 53, 69, 0.8);
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    line-height: 20px;
+    text-align: center;
+    font-size: 14px;
+}
+.sortable-ghost {
+    opacity: 0.4;
+}
+
+/* --- Previsualización de Imagen Única --- */
+.image-preview-item {
+    display: inline-block;
+    position: relative;
+}
+.image-preview-item img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}

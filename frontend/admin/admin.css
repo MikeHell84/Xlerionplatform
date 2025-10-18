@@ -1,0 +1,785 @@
+/* Variables para el modo oscuro */
+body.dark-mode {
+    background-color: #121212;
+    color: #e9ecef;
+}
+body.dark-mode .container {
+    background-color: #1f1f1f;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+body.dark-mode h1, body.dark-mode h2 {
+    color: #4dabf7;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: #f4f7f6;
+    color: #333;
+    margin: 0;
+    /* Eliminamos flexbox para permitir que el layout del dashboard ocupe el 100% del ancho. */
+    /* El centrado se manejará en los contenedores de login/reset. */
+    min-height: 100vh;
+}
+
+.container {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    max-width: 600px; /* Ancho por defecto para el login */
+    margin: 5vh auto; /* Centra los contenedores de login/reset vertical y horizontalmente */
+}
+
+/* Hacemos que el contenedor del login ocupe toda la altura para centrar el formulario */
+#login-container, #forgot-password-container, #reset-password-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Layout del Dashboard con Pestañas */
+.dashboard-layout {
+    display: grid;
+    grid-template-areas:
+        "header header"
+        "nav    main";
+    /* Columna de navegación con ancho fijo y la principal ocupa el resto sin encogerse. */
+    /* Esta es la corrección definitiva para el problema de cambio de tamaño. */
+    grid-template-columns: 200px minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+    max-width: 1600px; /* Mantenemos un ancho máximo para legibilidad en pantallas muy grandes */
+    margin: 0 auto; /* Centramos el layout */
+    padding: 2rem; /* Espaciado interno consistente */
+    min-height: 90vh;
+}
+
+.dashboard-header {
+    grid-area: header;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 1rem;
+}
+
+.dashboard-header div {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.dashboard-nav {
+    grid-area: nav;
+    border-right: 1px solid #dee2e6;
+    padding-right: 2rem;
+}
+
+.dashboard-main {
+    grid-area: main;
+    /* Solución: Evita que el contenido interno afecte el tamaño de la columna del grid. */
+    overflow: auto;
+    width: 100%; /* Asegura que el main ocupe todo el espacio de su celda de grid */
+}
+
+.dashboard-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    position: sticky;
+    top: 100px; /* Ajustar según la altura del header */
+}
+
+.dashboard-nav a {
+    display: block;
+    padding: 0.75rem 1rem;
+    text-decoration: none;
+    color: #333;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+h1, h2 {
+    color: #007bff;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+.form-suggestion {
+    background-color: #e7f5ff;
+    border-left: 4px solid #4dabf7;
+    padding: 10px 15px;
+    margin-bottom: 1.5rem;
+    font-size: 0.9em;
+    color: #333;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.search-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+}
+
+.search-form input {
+    flex-grow: 1;
+}
+
+
+.error-message {
+    color: #d9534f;
+    margin-top: 1rem;
+}
+
+/* Estilos para el botón de crear backup */
+#create-backup-btn {
+    background-color: #17a2b8;
+}
+
+.cache-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.form-inline {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+/* Estilos para las pestañas */
+.tab-pane {
+    display: none;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+.dashboard-nav a.active {
+    background-color: #007bff;
+    color: white;
+}
+
+body.dark-mode .dashboard-nav a {
+    color: #e9ecef;
+}
+
+
+/* Estilos para la paginación y listas de items */
+.item-list {
+    list-style: none;
+    padding: 0;
+}
+.item-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+.pagination-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+/* Estilos para el interruptor de tema */
+.theme-switch-wrapper {
+    display: flex;
+    align-items: center;
+    /* position: absolute;
+    top: 2rem; 
+    right: 2rem; */
+}
+
+.theme-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.theme-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: #4dabf7;
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+/* Estilos para la moderación de comentarios */
+.comment-moderation-item {
+    border-left: 4px solid #ffc107; /* Amarillo para pendiente */
+    padding: 10px;
+    margin-bottom: 10px;
+    background: #fffbe6;
+}
+.comment-moderation-item.approved {
+    border-left-color: #28a745; /* Verde para aprobado */
+    background: #f0fff4;
+}
+.comment-moderation-item p {
+    margin: 5px 0;
+}
+.comment-moderation-item .comment-meta {
+    font-size: 0.8em;
+    color: #6c757d;
+}
+
+/* Estilos para la gestión de secciones por tarjetas */
+.sections-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.section-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: box-shadow 0.3s ease;
+}
+
+.section-card-full-width {
+    grid-column: 1 / -1; /* Ocupa todas las columnas */
+}
+
+.home-content-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.section-card.active {
+    box-shadow: 0 0 0 2px #007bff;
+}
+
+.section-card h4 {
+    margin: 0 0 0.5rem 0;
+}
+
+.section-card .form-group {
+    margin-bottom: 0.75rem;
+}
+
+.section-card .form-group label {
+    font-size: 0.8em;
+    font-weight: normal;
+    color: #6c757d;
+}
+
+.section-card input, .section-card textarea {
+    font-size: 0.9em;
+    padding: 0.5rem;
+}
+
+.section-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.status-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.save-section-btn {
+    padding: 0.5rem 1rem;
+}
+
+.menu-preview {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
+
+body.dark-mode .menu-preview {
+    background-color: #2c2c2e;
+    border-color: #495057;
+}
+
+
+.menu-preview ul {
+    display: flex;
+    gap: 15px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-wrap: wrap;
+}
+
+.menu-preview li {
+    background-color: #e9ecef;
+    color: #343a40;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+body.dark-mode .menu-preview li {
+    background-color: #495057;
+    color: #f8f9fa;
+}
+
+#posts-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.form-group-inline {
+    display: flex;
+    gap: 20px;
+}
+
+/* Estilos para los items de FAQ en el admin */
+.faq-item {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+}
+
+.faq-item input, .faq-item textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 5px;
+    box-sizing: border-box;
+}
+.faq-item button {
+    background-color: #dc3545;
+}
+
+.faq-item {
+    position: relative;
+    padding-left: 35px; /* Espacio para el drag handle */
+}
+
+.faq-item .drag-handle {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: grab;
+    color: #aaa;
+}
+
+/* Estilos para el editor de columnas en el admin */
+#column-textareas-container {
+    display: grid;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.column-editor-item textarea {
+    width: 100%;
+    min-height: 150px;
+}
+
+/* Estilos para la previsualización de la galería */
+.gallery-preview-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.gallery-preview-item {
+    position: relative;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: grab;
+}
+
+.gallery-preview-item img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+}
+
+.remove-gallery-image-btn {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background-color: rgba(220, 53, 69, 0.8);
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    line-height: 20px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.sortable-ghost {
+    opacity: 0.4;
+}
+
+.image-preview-item {
+    display: inline-block;
+    position: relative;
+}
+.image-preview-item img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+/* Estilos para el estado del post en la lista */
+.post-status {
+    display: inline-block;
+    padding: 2px 6px;
+    font-size: 0.75em;
+    border-radius: 4px;
+    color: white;
+    margin-left: 10px;
+    text-transform: capitalize;
+}
+
+.status-published { background-color: #28a745; }
+.status-draft { background-color: #6c757d; }
+.status-scheduled { background-color: #ffc107; color: #212529; }
+
+/* Estilos para las tarjetas de estadísticas */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+    font-weight: normal;
+    color: white;
+}
+
+.stat-card p {
+    margin: 0;
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+/* Estilos para los fieldsets que agrupan las secciones del admin */
+fieldset {
+    border: 1px solid #dee2e6;
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+body.dark-mode fieldset {
+    border-color: #495057;
+}
+
+legend {
+    /* Quitamos el margen para que el nuevo contenedor lo controle */
+    margin-left: 0;
+}
+
+.fieldset-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem; /* Espacio entre la cabecera y el contenido */
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+body.dark-mode legend {
+    color: #4dabf7;
+}
+
+/* Estilos para el submenú de la pestaña de Contenido */
+.content-subnav {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    margin-bottom: 2rem;
+    border: 1px solid #dee2e6;
+}
+
+body.dark-mode .content-subnav {
+    background-color: #2c2c2e;
+    border-color: #495057;
+}
+
+#content-section-menu {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+#content-section-menu a {
+    text-decoration: none;
+    background-color: #e9ecef;
+    color: #343a40;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+#content-section-menu a:hover, #content-section-menu a.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+body.dark-mode #content-section-menu a {
+    background-color: #495057;
+    color: #f8f9fa;
+}
+
+body.dark-mode #content-section-menu a:hover, body.dark-mode #content-section-menu a.active {
+    background-color: #4dabf7;
+}
+
+/* --- Estilos mejorados para los selectores de color --- */
+.color-picker-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.color-input-wrapper {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: var(--border-radius, 8px);
+    overflow: hidden; /* Para que los bordes redondeados se apliquen al input de color */
+    transition: border-color 0.2s;
+}
+
+.color-input-wrapper:focus-within {
+    border-color: var(--primary-color, #007bff);
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+body.dark-mode .color-input-wrapper {
+    border-color: #495057;
+}
+
+/* Ocultamos el input de color por defecto, pero lo mantenemos funcional */
+.color-picker-group input[type="color"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 60px; /* Aumentado para mayor visibilidad */
+    height: 60px; /* Aumentado para mayor visibilidad */
+    border: none;
+    cursor: pointer;
+    background: none; /* Quitamos cualquier fondo por defecto */
+}
+
+/* Hacemos que el input de texto ocupe el resto del espacio */
+.color-hex-input {
+    flex-grow: 1;
+    border: none; /* Quitamos el borde porque ya lo tiene el wrapper */
+    outline: none;
+}
+
+/* --- Estilos para la rejilla de selectores de color --- */
+.color-settings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Rejilla responsiva */
+    gap: 1.5rem; /* Espacio entre los elementos */
+    margin-bottom: 1.5rem; /* Espacio debajo de la rejilla */
+}
+
+.footer-settings-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr; /* La empresa ocupa más espacio */
+    gap: 1rem;
+}
+
+/* Estilos para la rejilla de gráficos en el dashboard */
+.charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Dos columnas por defecto */
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+/* En pantallas más pequeñas, los gráficos se apilan */
+@media (max-width: 900px) {
+    .charts-grid {
+        grid-template-columns: 1fr; /* Una sola columna */
+    }
+}
+
+/* Estilos para el esqueleto de carga de los gráficos */
+.chart-container .skeleton-loader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #f0f0f0;
+    border-radius: var(--border-radius);
+    z-index: 10;
+    display: none;
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+.chart-container.is-loading .skeleton-loader {
+    display: block;
+}
+
+.chart-container.is-loading canvas {
+    visibility: hidden;
+}
+
+body.dark-mode .chart-container .skeleton-loader {
+    background: #2c2c2e;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+/* Estilos para el botón de refrescar dashboard */
+#refresh-dashboard-btn {
+    background: none;
+    border: none;
+    color: #6c757d; /* Color gris neutro */
+    font-size: 1.2rem; /* Un poco más grande */
+    cursor: pointer;
+    padding: 8px;
+}
+
+#refresh-dashboard-btn:hover {
+    transform: scale(1.1);
+}
+
+#refresh-dashboard-btn.is-loading {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* --- Diseño Responsivo para Móviles --- */
+@media (max-width: 768px) {
+    .dashboard-layout {
+        grid-template-areas:
+            "header"
+            "nav"
+            "main";
+        grid-template-columns: 1fr; /* Columna única */
+        gap: 1rem;
+        padding: 1rem; /* Reducir el padding general en móviles */
+    }
+
+    .dashboard-nav {
+        border-right: none;
+        border-bottom: 1px solid #dee2e6;
+        padding: 0 0 1rem 0;
+        position: static; /* Quitar el 'sticky' en móviles */
+    }
+
+    .dashboard-nav ul {
+        display: flex;
+        flex-wrap: wrap; /* Permitir que los elementos del menú se ajusten */
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .dashboard-header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    /* Asegurar que el contenedor del dashboard ocupe todo el ancho en móviles */
+    .dashboard-layout.container {
+        padding: 1rem;
+        max-width: 100%;
+    }
+}

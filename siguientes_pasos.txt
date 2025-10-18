@@ -1,0 +1,42 @@
+=================================================
+ SIGUIENTES PASOS Y FUNCIONALIDADES PENDIENTES
+=================================================
+
+Este archivo contiene una lista de posibles futuras funcionalidades para el proyecto,
+formuladas como prompts para un asistente de código.
+
+---
+I. Funcionalidades del Panel de Administración
+---
+
+1.  **Exportar a CSV:**
+    "Añade una funcionalidad para exportar los posts a un archivo CSV desde el panel de administración."
+
+2.  **Exportar/Importar Traducciones:**
+    "Añade botones en la sección de Internacionalización para exportar las traducciones de un idioma a un archivo JSON y para importar traducciones desde un archivo JSON."
+
+3.  **SEO por Post:**
+    "Añade campos de SEO (meta título, meta descripción) a cada post individualmente, que sobreescriban la configuración global si están definidos."
+
+4.  **Registro de Actividad de Usuario:**
+    "Crea una nueva pestaña 'Registro de Actividad' en el panel de administración que muestre un log de las acciones importantes realizadas por los usuarios (ej. 'Usuario X creó el post Y')."
+
+5.  **Optimización de Imágenes:**
+    "Implementa una optimización automática de imágenes al subirlas. Al subir una imagen, conviértela a formato WebP y crea diferentes tamaños (thumbnail, medium, large)."
+
+
+---
+II. Funcionalidades del Backend y API
+---
+
+1.  **Seguimiento de Vistas:**
+    "Implementa la lógica para el endpoint `/api/public/track-view` para que registre las visitas a las secciones."
+
+2.  **API Pública de Posts:**
+    "Crea endpoints públicos para obtener la lista de posts de una sección y el detalle de un post individual, para que puedan ser consumidos por un frontend diferente o una app móvil."
+
+3.  **Restablecimiento de Contraseña:**
+    "Añade una funcionalidad de 'Olvidé mi contraseña' que envíe un enlace de restablecimiento por email."
+
+4.  **Autenticación de Dos Factores (2FA):**
+    "Implementa la autenticación de dos factores (2FA) para el login del panel de administración."

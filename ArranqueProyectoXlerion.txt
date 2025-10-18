@@ -1,0 +1,123 @@
+===========================================================
+ GUÍA DE ARRANQUE RÁPIDO - PROYECTO ULTIMATE WEBSITE
+===========================================================
+
+Este documento describe los pasos necesarios para configurar y ejecutar
+el proyecto completo en un nuevo entorno de desarrollo.
+
+
+---
+**PASO 1: PRERREQUISITOS**
+---
+
+Asegúrate de tener instalado el siguiente software en tu sistema:
+
+1.  **Node.js:** (Versión 18 o superior recomendada).
+2.  **MySQL:** Un servidor de base de datos MySQL o MariaDB.
+3.  **Git:** Para la gestión del código fuente.
+4.  **Ollama (Opcional):** Si deseas utilizar las funcionalidades de IA para generar resúmenes.
+5.  **Postman (Recomendado):** Para probar los endpoints de la API durante el desarrollo.
+
+
+---
+**PASO 2: CONFIGURACIÓN DEL BACKEND**
+---
+
+1.  **Abre una terminal** y navega a la carpeta `/backend` del proyecto.
+
+2.  **Instala las dependencias** de Node.js ejecutando:
+    ```bash
+    npm install
+    ```
+
+3.  **Crea el archivo de entorno:**
+    - En la carpeta `/backend`, crea un nuevo archivo llamado `.env`.
+    - Copia y pega el siguiente contenido en el archivo `.env`, asegurándote de reemplazar los valores con tus propias credenciales.
+
+    ```
+    # Credenciales de la Base de Datos
+    DB_HOST="xlerion.com"
+    DB_USER="xlerionc_xdata"
+    DB_PASSWORD="81720164Mike!1984"
+    DB_NAME="xlerionc_xlerion"
+
+    # Secreto para los JSON Web Tokens (JWT) - ¡CAMBIA ESTO POR ALGO SEGURO!
+    JWT_SECRET="un_secreto_muy_largo_y_dificil_de_adivinar_12345"
+
+    # URL del servicio Ollama (si lo usas)
+    # Si Ollama corre en la misma máquina, usa: http://localhost:11434/api/generate
+    # Si usas ngrok, reemplaza la URL.
+    OLLAMA_API_URL="http://localhost:11434/api/generate"
+    ```
+
+
+---
+**PASO 3: CONFIGURACIÓN DE LA BASE DE DATOS**
+---
+
+1.  **Conéctate a tu servidor MySQL** usando tu cliente de base de datos preferido (phpMyAdmin, DBeaver, MySQL Workbench, etc.).
+
+2.  **Ejecuta el siguiente script SQL.** Este script creará todas las tablas necesarias, las relaciones y los datos iniciales para que el sistema funcione correctamente.
+
+    ```sql
+    -- Elimina las tablas si ya existen para asegurar un estado limpio, en el orden correcto para evitar errores de claves foráneas.
+    DROP TABLE IF EXISTS `translations`, `page_views`, `comments`, `posts`, `sections`, `social_links`, `content_blocks`, `site_settings`, `users`, `languages`;
+
+    CREATE TABLE `users` ( `id` int(11) NOT NULL AUTO_INCREMENT, `name` varchar(255) NOT NULL, `email` varchar(255) NOT NULL, `password` varchar(255) NOT NULL, `role` enum('admin','editor') NOT NULL DEFAULT 'editor', `created_at` timestamp NOT NULL DEFAULT current_timestamp(), PRIMARY KEY (`id`), UNIQUE KEY `email` (`email`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+    CREATE TABLE `sections` ( `id` int(11) NOT NULL AUTO_INCREMENT, `name` varchar(255) NOT NULL, `slug` varchar(255) NOT NULL, `icon` varchar(100) DEFAULT NULL, `description` text DEFAULT NULL, `status` enum('active','inactive') NOT NULL DEFAULT 'inactive', PRIMARY KEY (`id`), UNIQUE KEY `slug` (`slug`), UNIQUE KEY `name` (`name`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+    CREATE TABLE `posts` ( `id` int(11) NOT NULL AUTO_INCREMENT, `section_id` int(11) NOT NULL, `title` json DEFAULT NULL, `slug` varchar(255) DEFAULT NULL, `content` text DEFAULT NULL, `post_data` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`post_data`)), `smart_summary` text DEFAULT NULL, `status` enum('published','draft','scheduled') NOT NULL DEFAULT 'draft', `publish_at` datetime DEFAULT NULL, `created_at` timestamp NOT NULL DEFAULT current_timestamp(), PRIMARY KEY (`id`), UNIQUE KEY `slug` (`slug`), KEY `section_id` (`section_id`), CONSTRAINT `posts_ibfk_1` FOREIGN KEY (`section_id`) REFERENCES `sections` (`id`) ON DELETE CASCADE ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+    CREATE TABLE `comments` ( `id` int(11) NOT NULL AUTO_INCREMENT, `post_id` int(11) NOT NULL, `author_name` varchar(255) NOT NULL, `content` text NOT NULL, `status` enum('pending','approved','rejected') NOT NULL DEFAULT 'pending', `created_at` timestamp NOT NULL DEFAULT current_timestamp(), PRIMARY KEY (`id`), KEY `post_id` (`post_id`), CONSTRAINT `comments_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`) ON DELETE CASCADE ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+    CREATE TABLE `site_settings` ( `setting_key` varchar(255) NOT NULL, `setting_value` text DEFAULT NULL, PRIMARY KEY (`setting_key`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+    CREATE TABLE `social_links` ( `id` int(11) NOT NULL AUTO_INCREMENT, `name` varchar(255) NOT NULL, `url` varchar(255) NOT NULL, `icon_class` varchar(100) NOT NULL, PRIMARY KEY (`id`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+    CREATE TABLE `content_blocks` ( `id` int(11) NOT NULL AUTO_INCREMENT, `type` varchar(50) NOT NULL, `title` json DEFAULT NULL, `content` json DEFAULT NULL, `image_url` varchar(255) DEFAULT NULL, `cta_text` json DEFAULT NULL, `cta_link` varchar(255) DEFAULT NULL, `is_active` tinyint(1) NOT NULL DEFAULT 1, `sort_order` int(11) NOT NULL DEFAULT 0, `background_color` varchar(20) DEFAULT '#ffffff', `text_color` varchar(20) DEFAULT '#212529', PRIMARY KEY (`id`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+    CREATE TABLE `page_views` ( `section_id` int(11) NOT NULL, `view_date` date NOT NULL, `view_count` int(11) NOT NULL DEFAULT 1, PRIMARY KEY (`section_id`,`view_date`), CONSTRAINT `page_views_ibfk_1` FOREIGN KEY (`section_id`) REFERENCES `sections` (`id`) ON DELETE CASCADE ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+    CREATE TABLE `languages` ( `code` varchar(10) NOT NULL, `name` varchar(50) NOT NULL, `is_default` tinyint(1) NOT NULL DEFAULT 0, PRIMARY KEY (`code`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;    CREATE TABLE `translations` ( `id` int(11) NOT NULL AUTO_INCREMENT, `lang_code` varchar(10) NOT NULL, `translation_key` varchar(255) NOT NULL, `translation_value` text NOT NULL, PRIMARY KEY (`id`), UNIQUE KEY `lang_key_unique` (`lang_code`,`translation_key`), KEY `lang_code` (`lang_code`), CONSTRAINT `translations_ibfk_1` FOREIGN KEY (`lang_code`) REFERENCES `languages` (`code`) ON DELETE CASCADE ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+    INSERT INTO `site_settings` (`setting_key`, `setting_value`) VALUES ('background_color', '#ffffff'), ('border_radius', '8'), ('font_family', '-apple-system, BlinkMacSystemFont, ''Segoe UI'', Roboto, ''Helvetica Neue'', Arial, sans-serif'), ('footer_text', '© 2024 Tu Empresa. Todos los derechos reservados.'), ('hero_background_image', NULL), ('hero_cta_link', '#'), ('hero_cta_text', 'Saber Más'), ('hero_subtitle', 'Tu eslogan increíble va aquí.'), ('hero_title', 'Bienvenido a Tu Sitio Web'), ('primary_color', '#007bff'), ('secondary_color', '#6c757d'), ('site_logo', NULL), ('site_title', 'Mi Sitio Web'), ('text_color', '#212529');
+    INSERT INTO `languages` (`code`, `name`, `is_default`) VALUES ('es', 'Español', 1), ('en', 'English', 0);
+    INSERT INTO `translations` (`lang_code`, `translation_key`, `translation_value`) VALUES ('es', 'welcome_message', 'Bienvenido a Nuestro Sitio'), ('es', 'explore_sections', 'Explora nuestras secciones para descubrir más.'), ('es', 'contact_us', 'Contáctanos'), ('en', 'welcome_message', 'Welcome to Our Site'), ('en', 'explore_sections', 'Explore our sections to discover more.'), ('en', 'contact_us', 'Contact Us');
+    ```
+
+---
+**PASO 4: EJECUTAR EL PROYECTO**
+---
+
+1.  **Inicia el Servidor Backend:**
+    - En la terminal, dentro de la carpeta `/backend`, ejecuta:
+    ```bash
+    node server.js
+    ```
+    - Deberías ver el mensaje: `🚀 Servidor corriendo en http://localhost:3000`
+
+2.  **Visualiza el Sitio Público:**
+    - Una vez que el backend esté corriendo, abre tu navegador y ve directamente a la siguiente URL:
+    `http://localhost:3000`
+    - Tu servidor de Node.js se encargará de servir tanto la página principal como todos sus recursos (CSS, JS, imágenes).
+
+3.  **Accede al Panel de Administración:**
+    - Abre tu navegador y ve a la dirección: `http://localhost:3000/admin`
+
+
+---
+**PASO 5: PRIMEROS PASOS EN EL PANEL DE ADMINISTRACIÓN**
+---
+
+1.  **Registra el Primer Usuario Administrador:**
+    - La primera vez que accedas al panel, no habrá usuarios. El sistema te permitirá registrar el primer usuario, que automáticamente tendrá el rol de 'admin'.
+    - Usa un correo y contraseña seguros.
+
+2.  **Inicia Sesión:**
+    - Una vez registrado, inicia sesión con las credenciales que acabas de crear.
+
+3.  **Configura el Contenido Inicial (¡MUY IMPORTANTE!):**
+    - **Este es el paso clave para que tu sitio público deje de estar en blanco.**
+    - Para que la página principal muestre contenido, necesitas crearlo desde el panel de administración.
+    - **a. Crea un Bloque de Contenido:**
+        - Ve a la pestaña **"Bloques Portada"**.
+        - Rellena los campos (por ejemplo, un título y un poco de texto en el contenido).
+        - Asegúrate de que el interruptor **"Activo"** esté encendido.
+        - Haz clic en **"Guardar Bloque"**.
+
+4.  **¡Listo!**
+    - **Refresca tu sitio público (`http://localhost:3000`)**. Ahora deberías ver el bloque de contenido que acabas de crear.
+    - Puedes empezar a explorar y a configurar el resto de las secciones y funcionalidades desde el panel.

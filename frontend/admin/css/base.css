@@ -1,0 +1,43 @@
+/* frontend/admin/css/base.css */
+
+/* Variables para el modo oscuro */
+body.dark-mode {
+    background-color: #121212;
+    color: #e9ecef;
+}
+body.dark-mode .container {
+    background-color: #1f1f1f;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+body.dark-mode h1, body.dark-mode h2, body.dark-mode legend {
+    color: #4dabf7;
+}
+body.dark-mode fieldset {
+    border-color: #495057;
+}
+
+/* Estilos generales del cuerpo y contenedor */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: #f4f7f6;
+    color: #333;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 2rem;
+}
+
+.container {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+}
+
+h1, h2 {
+    color: #007bff;
+}

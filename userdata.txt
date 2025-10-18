@@ -1,0 +1,18 @@
+# DB user Visit:
+admin@xlerion.com
+adminpass123
+
+# Credenciales de MySQL para el servidor remoto
+DB_HOST="xlerion.com"  # O la IP del servidor si es diferente
+DB_USER="xlerionc_xdata"
+DB_PASSWORD="81720164Mike!1984"
+DB_NAME="xlerionc_xlerion"
+
+
+openAI:
+API: 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
+
+NGrok:
+ngrok config add-authtoken 348AQvmxzIDYOExznkCzxo671dD_4sdRVuhUZ4SSXJGkpaJ3T
+
+ngrok http 11434

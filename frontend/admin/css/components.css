@@ -1,0 +1,195 @@
+/* frontend/admin/css/components.css */
+
+/* --- Listas de Items (Posts, Enlaces Sociales) --- */
+.item-list {
+    list-style: none;
+    padding: 0;
+}
+.item-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+/* --- Paginación --- */
+.pagination-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+/* --- Interruptor de Tema (Theme Switch) --- */
+.theme-switch-wrapper {
+    display: flex;
+    align-items: center;
+}
+.theme-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+.theme-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+}
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+}
+input:checked + .slider {
+    background-color: #4dabf7;
+}
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+.slider.round {
+    border-radius: 34px;
+}
+.slider.round:before {
+    border-radius: 50%;
+}
+
+/* --- Tarjetas de Sección --- */
+.sections-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+.section-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: box-shadow 0.3s ease;
+}
+.section-card.active {
+    box-shadow: 0 0 0 2px #007bff;
+}
+.section-card h4 {
+    margin: 0 0 0.5rem 0;
+}
+.section-card .form-group {
+    margin-bottom: 0.75rem;
+}
+.section-card .form-group label {
+    font-size: 0.8em;
+    font-weight: normal;
+    color: #6c757d;
+}
+.section-card input, .section-card textarea {
+    font-size: 0.9em;
+    padding: 0.5rem;
+}
+.section-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+}
+.status-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.save-section-btn {
+    padding: 0.5rem 1rem;
+}
+.section-card-full-width {
+    grid-column: 1 / -1; /* Ocupa todas las columnas */
+}
+
+/* --- Vista Previa del Menú --- */
+.menu-preview {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
+body.dark-mode .menu-preview {
+    background-color: #2c2c2e;
+    border-color: #495057;
+}
+.menu-preview ul {
+    display: flex;
+    gap: 15px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-wrap: wrap;
+}
+.menu-preview li {
+    background-color: #e9ecef;
+    color: #343a40;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-weight: 500;
+}
+body.dark-mode .menu-preview li {
+    background-color: #495057;
+    color: #f8f9fa;
+}
+
+/* --- Etiquetas de Estado de Post --- */
+.post-status {
+    display: inline-block;
+    padding: 2px 6px;
+    font-size: 0.75em;
+    border-radius: 4px;
+    color: white;
+    margin-left: 10px;
+    text-transform: capitalize;
+}
+.status-published { background-color: #28a745; }
+.status-draft { background-color: #6c757d; }
+.status-scheduled { background-color: #ffc107; color: #212529; }
+
+/* --- Tarjetas de Estadísticas --- */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+.stat-card {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+.stat-card h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+    font-weight: normal;
+    color: white;
+}
+.stat-card p {
+    margin: 0;
+    font-size: 2.5rem;
+    font-weight: bold;
+}
