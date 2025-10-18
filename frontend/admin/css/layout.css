@@ -1,0 +1,65 @@
+/* frontend/admin/css/layout.css */
+
+/* Layout del Dashboard con Pestañas */
+.dashboard-layout {
+    display: grid;
+    grid-template-areas:
+        "header"
+        "nav"
+        "main";
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto 1fr;
+    gap: 2rem;
+    min-height: 90vh;
+}
+
+.dashboard-header {
+    grid-area: header;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 1rem;
+}
+
+.dashboard-header div {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.dashboard-nav {
+    grid-area: nav;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 1rem;
+}
+
+.dashboard-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+/* --- Media Query para Dispositivos de Escritorio --- */
+@media (min-width: 769px) {
+    .dashboard-layout {
+        grid-template-areas:
+            "header header"
+            "nav    main";
+        grid-template-columns: 200px 1fr; /* Ancho de la barra de navegación */
+        grid-template-rows: auto 1fr;
+    }
+
+    .dashboard-nav {
+        border-right: 1px solid #dee2e6;
+        padding-right: 2rem;
+        border-bottom: none;
+    }
+
+    .dashboard-nav ul {
+        flex-direction: column; /* Menú vertical en escritorio */
+    }
+}

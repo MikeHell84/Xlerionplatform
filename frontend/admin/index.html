@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración</title>
+    <link rel="icon" href="/assets/images/logo.png" type="image/png">
+        <!-- Font Awesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- SortableJS para Drag and Drop -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <link rel="stylesheet" href="admin.css">
+    <style>
+        /* --- SOLUCIONES Y AJUSTES RÁPIDOS --- */
+
+        /* 1. Solución para el problema de expansión del gráfico de Chart.js */
+        .chart-container {
+            position: relative;
+            height: 400px; /* Altura fija para el contenedor del gráfico */
+            width: 100%;
+        }
+
+        /* 2. Mejora visual para los selectores de color */
+        .color-hex-input {
+            padding-left: 35px; /* Espacio para el swatch de color */
+            background-position: 5px center;
+            background-image: linear-gradient(var(--swatch-color, transparent), var(--swatch-color, transparent));
+            background-repeat: no-repeat;
+            background-size: 20px 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app">
+        <!-- Pantalla de Login -->
+        <div id="login-container" class="container">
+            <h1>Iniciar Sesión</h1>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Contraseña</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit">Entrar</button>
+                <p id="login-error" class="error-message"></p>
+                <p class="form-link"><a href="#forgot-password" id="forgot-password-link">¿Olvidaste tu contraseña?</a></p>
+            </form>
+        </div>
+
+        <!-- Pantalla de Olvidé mi Contraseña -->
+        <div id="forgot-password-container" class="container" style="display: none;">
+            <h1>Restablecer Contraseña</h1>
+            <p>Ingresa tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña.</p>
+            <form id="forgot-password-form">
+                <div class="form-group">
+                    <label for="forgot-email">Email</label>
+                    <input type="email" id="forgot-email" required>
+                </div>
+                <button type="submit">Enviar Enlace</button>
+                <p id="forgot-message" class="info-message"></p>
+                <p class="form-link"><a href="#login" id="back-to-login-link1">Volver a Iniciar Sesión</a></p>
+            </form>
+        </div>
+
+        <!-- Pantalla de Restablecer Contraseña -->
+        <div id="reset-password-container" class="container" style="display: none;">
+            <h1>Crea una Nueva Contraseña</h1>
+            <form id="reset-password-form">
+                <input type="hidden" id="reset-token">
+                <div class="form-group">
+                    <label for="reset-password-input">Nueva Contraseña</label>
+                    <input type="password" id="reset-password-input" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label for="reset-password-confirm">Confirmar Nueva Contraseña</label>
+                    <input type="password" id="reset-password-confirm" required>
+                </div>
+                <button type="submit">Guardar Contraseña</button>
+                <p id="reset-message" class="info-message"></p>
+                <p class="form-link"><a href="#login" id="back-to-login-link2">Volver a Iniciar Sesión</a></p>
+            </form>
+        </div>
+
+        <!-- Panel Principal (oculto por defecto) -->
+        <div id="dashboard-container" class="container dashboard-layout" style="display: none;">
+            <header class="dashboard-header">
+                <h1>Panel de Administración</h1>
+                <div>
+                    <div class="theme-switch-wrapper">
+                        <label class="theme-switch" for="theme-checkbox">
+                            <input type="checkbox" id="theme-checkbox" />
+                            <div class="slider round"></div>
+                        </label>
+                    </div>
+                    <button id="logout-btn">Cerrar Sesión</button>
+                </div>
+            </header>
+            
+            <nav class="dashboard-nav">
+                <ul>
+                    <li id="nav-dashboard"><a href="#tab-dashboard" class="tab-link active">Dashboard</a></li>
+                    <li id="nav-sections"><a href="#tab-sections" class="tab-link">Estructura</a></li>
+                    <li id="nav-posts"><a href="#tab-posts" class="tab-link">Contenido</a></li>
+                    <li id="nav-blocks"><a href="#tab-blocks" class="tab-link">Bloques Portada</a></li>
+                    <li id="nav-appearance"><a href="#tab-appearance" class="tab-link">Apariencia</a></li>
+                    <li id="nav-comments"><a href="#tab-comments" class="tab-link">Interacción</a></li>
+                    <li id="nav-social"><a href="#tab-social" class="tab-link">Conexiones</a></li>
+                    <li id="nav-users"><a href="#tab-users" class="tab-link">Usuarios</a></li>
+                    <li id="nav-backups"><a href="#tab-backups" class="tab-link">Copias de Seguridad</a></li>
+                    <li id="nav-seo"><a href="#tab-seo" class="tab-link">SEO</a></li>
+                    <li id="nav-email"><a href="#tab-email" class="tab-link">Email</a></li>
+                    <li id="nav-cache"><a href="#tab-cache" class="tab-link">Caché</a></li>
+                    <li id="nav-i18n"><a href="#tab-i18n" class="tab-link">Internacionalización</a></li>
+                    <li id="nav-activity-log"><a href="#tab-activity-log" class="tab-link">Registro de Actividad</a></li>
+                </ul>
+            </nav>
+            <main class="dashboard-main">
+                <!-- Pestaña: Dashboard -->
+                <div id="tab-dashboard" class="tab-pane active">
+                    <fieldset>
+                        <div class="fieldset-header">
+                            <legend>Resumen General</legend>
+                            <button id="refresh-dashboard-btn" title="Refrescar datos"><i class="fas fa-sync-alt"></i></button>
+                        </div>
+                        <div id="dashboard-stats" class="stats-grid">
+                            <div class="stat-card"><h3>Posts Publicados</h3><p id="stats-posts">0</p></div>
+                            <div class="stat-card"><h3>Comentarios Totales</h3><p id="stats-comments">0</p></div>
+                            <div class="stat-card"><h3>Secciones Activas</h3><p id="stats-sections">0</p></div>
+                        </div>
+                        <div class="charts-grid">
+                            <div class="chart-container is-loading">
+                                <h3>Visitas por Día (Últimos 30 días)</h3>
+                                <div class="skeleton-loader"></div>
+                                <canvas id="viewsChart"></canvas>
+                            </div>
+                            <div class="chart-container is-loading">
+                                <h3>Top 5 Posts por Categoría</h3>
+                                <div class="skeleton-loader"></div>
+                                <canvas id="postsByCategoryChart"></canvas>
+                            </div>
+                            <div class="chart-container is-loading">
+                                <h3>Top 5 Posts por Comentarios</h3>
+                                <div class="skeleton-loader"></div>
+                                <canvas id="commentsByPostChart"></canvas>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <!-- Pestaña: Estructura del Sitio -->
+                <div id="tab-sections" class="tab-pane">
+                    <fieldset>
+                        <legend>Estructura del Sitio: Gestionar Secciones</legend>
+                        <p>Activa o desactiva las secciones que quieres mostrar en tu sitio. Una sección solo aparecerá en el menú si está activa y tiene al menos un post.</p>
+                        <div id="sections-grid" class="sections-grid">
+                            <!-- Las tarjetas de sección se cargarán aquí -->
+                        </div>
+                        <h3>Vista Previa del Menú Principal</h3>
+                        <nav id="menu-preview" class="menu-preview"></nav>
+                    </fieldset>
+                </div>
+
+                <!-- Pestaña: Contenido (Posts) -->
+                <div id="tab-posts" class="tab-pane">
+                    <fieldset>
+                        <form id="search-posts-form" class="search-form">
+                            <input type="search" id="search-posts-input" placeholder="Buscar posts por título...">
+                            <button type="submit">Buscar</button>
+                        </form>
+                        <legend>Contenido: Gestionar Posts</legend>
+                        <div class="content-subnav">
+                            <p>Selecciona una sección para gestionar su contenido:</p>
+                            <div id="content-section-menu"></div>
+                        </div>
+                        <div id="posts-header">
+                            <h3 id="posts-section-title">Todos los Posts</h3>
+                            <button id="show-all-posts-btn" style="display: none;">Mostrar Todos</button>
+                            <button id="export-posts-btn" class="export-btn" title="Exportar todos los posts a CSV"><i class="fas fa-file-csv"></i> Exportar a CSV</button>
+                        </div>
+                        <div id="posts-list"></div>
+                        <div id="posts-pagination" class="pagination-controls"></div>
+                        <hr>
+                        <h3 id="post-form-title">Crear Nuevo Post</h3>
+                        <form id="create-post-form">
+                            <div class="form-group">
+                                <label for="post-section">Sección</label>
+                                <select id="post-section" required></select>
+                            </div>
+                            <div id="dynamic-post-fields"></div>
+                            <input type="hidden" id="post-id">
+                            <div class="form-group">
+                                <label for="publish_at">Programar Publicación (dejar en blanco para publicar ahora)</label>
+                                <input type="datetime-local" id="publish_at" name="publish_at">
+                            </div>
+                            <button type="submit" name="status" value="published" id="publish-post-btn">Publicar / Programar</button>
+                            <button type="submit" name="status" value="draft" id="draft-post-btn" style="background-color: #6c757d;">Guardar Borrador</button>
+                            <button type="button" id="cancel-edit-btn" style="display: none; background-color: #6c757d;">Cancelar Edición</button>
+                        </form>
+                    </fieldset>
+                </div>
+
+                <!-- Pestaña: Bloques de Contenido -->
+                <div id="tab-blocks" class="tab-pane">
+                    <fieldset>
+                        <legend>Contenido: Bloques de la Página Principal</legend>
+                        <p>Crea, edita y reordena los bloques de contenido de tu página de inicio. Arrastra los bloques para cambiar su orden.</p>
+                        <div id="content-blocks-list" class="item-list sortable-list"></div>
+                        <hr>
+                        <h3 id="content-block-form-title">Añadir/Editar Bloque</h3>
+                        <form id="content-block-form">
+                            <input type="hidden" id="content-block-id">
+                            <div class="form-group">
+                                <label for="content-block-type">Tipo de Bloque</label>
+                                <select id="content-block-type" required>
+                                    <option value="text">Solo Texto</option>
+                                    <option value="image_left">Imagen a la Izquierda</option>
+                                    <option value="image_right">Imagen a la Derecha</option>
+                                    <option value="cta">Llamada a la Acción (CTA)</option>
+                                    <option value="gallery">Galería de Imágenes</option>
+                                    <option value="youtube">Video de YouTube</option>
+                                    <option value="testimonial">Testimonio</option>
+                                    <option value="accordion">Acordeón / FAQ</option>
+                                    <option value="columns">Columnas</option>
+                                    <option value="card">Tarjeta</option>
+                                    <option value="counter">Contador</option>
+                                    <option value="divisor">Divisor</option>
+                                    <option value="spacer">Espaciador</option>
+                                </select>
+                            </div>
+                            <!-- Contenedor para los campos que serán multilingües -->
+                            <div id="multilingual-block-fields"></div>
+                            <div id="faq-items-container" class="form-group" style="display: none;">
+                                <label>Preguntas y Respuestas</label>
+                                <button type="button" id="add-faq-item-btn" style="margin-bottom: 10px;">Añadir Pregunta</button>
+                            </div>
+                            <div id="columns-editor-container" class="form-group" style="display: none;">
+                                <label>Editor de Columnas</label>
+                                <div class="form-group">
+                                    <label for="column-count-select">Número de Columnas</label>
+                                    <select id="column-count-select">
+                                        <option value="2">2 Columnas</option>
+                                        <option value="3" selected>3 Columnas</option>
+                                        <option value="4">4 Columnas</option>
+                                    </select>
+                                </div>
+                                <div id="column-textareas-container"></div>
+                            </div>
+                            <div id="divisor-settings-container" class="form-group" style="display: none;">
+                                <label>Estilo del Divisor</label>
+                                <div class="form-group-inline">
+                                    <div class="form-group">
+                                        <label for="divisor-style">Estilo de Línea</label>
+                                        <select id="divisor-style">
+                                            <option value="solid">Sólido</option>
+                                            <option value="dashed">Punteado</option>
+                                            <option value="dotted">Puntos</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="divisor-thickness">Grosor (px)</label>
+                                        <input type="number" id="divisor-thickness" value="1" min="1" max="10">
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="spacer-settings-container" class="form-group" style="display: none;">
+                                <div class="form-group">
+                                    <label for="spacer-height">Altura del Espacio (en píxeles)</label>
+                                    <input type="number" id="spacer-height" value="50" min="10" max="500">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="content-block-image">Imagen (o Imágenes para Galería)</label>
+                                <input type="file" id="content-block-image" accept="image/*" multiple>
+                                <div id="image-preview-container" style="margin-top: 10px;"></div>
+                                <div id="gallery-preview" class="gallery-preview-container"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="content-block-cta-link">Enlace del Botón (o URL de YouTube)</label>
+                                <input type="url" id="content-block-cta-link" placeholder="https://...">
+                            </div>
+                            <div class="form-group-inline">
+                                <div class="form-group">
+                                    <label for="content-block-bg-color">Color de Fondo</label>
+                                    <input type="color" id="content-block-bg-color" value="#ffffff">
+                                </div>
+                                <div class="form-group">
+                                    <label for="content-block-text-color">Color de Texto</label>
+                                    <input type="color" id="content-block-text-color" value="#212529">
+                                </div>
+                            </div>
+                            <label><input type="checkbox" id="content-block-is-active" checked> Activo</label>
+                            <br><br>
+                            <button type="submit" id="save-content-block-btn">Añadir Bloque</button>
+                            <button type="button" id="cancel-content-block-edit-btn" style="display: none; background-color: #6c757d;">Cancelar Edición</button>
+                        </form>
+                    </fieldset>
+                </div>
+
+                <!-- Pestaña: Apariencia -->
+                <div id="tab-appearance" class="tab-pane">
+                    <fieldset>
+                        <legend>Apariencia: Configuración Visual</legend>
+                        <h4>Sección Hero (Portada)</h4>
+                        <form id="hero-settings-form">
+                            <div class="form-group">
+                                <label for="hero_title">Título del Hero</label>
+                                <input type="text" id="hero_title" name="hero_title">
+                            </div>
+                            <div class="form-group">
+                                <label for="hero_subtitle">Subtítulo del Hero</label>
+                                <input type="text" id="hero_subtitle" name="hero_subtitle">
+                            </div>
+                            <div class="form-group">
+                                <label for="hero_cta_text">Texto del Botón (CTA)</label>
+                                <input type="text" id="hero_cta_text" name="hero_cta_text" placeholder="Ej: Ver Proyectos">
+                            </div>
+                            <div class="form-group">
+                                <label for="hero_cta_link">Enlace del Botón (CTA)</label>
+                                <select id="hero_cta_link" name="hero_cta_link">
+                                    <!-- Las opciones se cargarán dinámicamente -->
+                                </select>
+                                <!-- Campo para URL personalizada, oculto por defecto -->
+                                <input type="url" id="hero_cta_link_custom" placeholder="Introduce una URL personalizada aquí" style="display: none; margin-top: 10px;">
+                            </div>
+                            <button type="submit">Guardar Cambios del Hero</button>
+                        </form>
+                        <form id="hero-image-upload-form">
+                            <div class="form-group">
+                                <label for="heroImageFile">Imagen de Fondo del Hero</label>
+                                <input type="file" id="heroImageFile" name="heroImageFile" accept="image/*">
+                                <button type="submit">Subir Imagen</button>
+                            </div>
+                            <div class="image-preview-container">
+                                <p id="no-hero-text">No hay imagen seleccionada.</p>
+                                <div id="hero-image-preview"></div>
+                            </div>
+                        </form>
+                        <hr>
+                        <h4>Identidad y Estilos Globales</h4>
+                        <div class="form-group">
+                            <label>Logo Actual</label>
+                            <div class="image-preview-container">
+                                <img id="logo-preview" src="" alt="Vista previa del logo" style="max-width: 200px; max-height: 80px; display: none;">
+                                <p id="no-logo-text">No hay un logo configurado.</p>
+                            </div>
+                        </div>
+                        <form id="logo-upload-form">
+                            <label for="logoFile">Subir nuevo logo</label>
+                            <input type="file" id="logoFile" name="logoFile" accept="image/*">
+                            <button type="submit">Subir Logo</button>
+                        </form>
+                        <hr>
+                        <form id="settings-form">
+                            <div class="form-group">
+                                <label for="site_title">Título del Sitio (para la pestaña del navegador)</label>
+                                <input type="text" id="site_title" name="site_title">
+                            </div>
+                            <div class="form-group">
+                                <label>Texto del Pie de Página</label>
+                                <div class="footer-settings-grid">
+                                    <div class="form-group">
+                                        <label for="footer_company_name">Nombre de la Empresa</label>
+                                        <input type="text" id="footer_company_name" name="footer_company_name" placeholder="Tu Empresa">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="footer_copyright_year">Año (dejar en blanco para el año actual)</label>
+                                        <input type="text" id="footer_copyright_year" name="footer_copyright_year" placeholder="2024">
+                                    </div>
+                                    <input type="hidden" id="footer_text" name="footer_text"> <!-- Campo oculto para compatibilidad -->
+                                </div>
+                            </div>
+                            <div class="color-settings-grid">
+                                <div class="form-group color-picker-group">
+                                    <label for="primary_color">Color Primario</label>
+                                    <div class="color-input-wrapper">
+                                        <input type="color" id="primary_color" name="primary_color">
+                                        <input type="text" id="primary_color_hex" class="color-hex-input" maxlength="7">
+                                    </div>
+                                </div>
+                                <div class="form-group color-picker-group">
+                                    <label for="secondary_color">Color Secundario</label>
+                                    <div class="color-input-wrapper">
+                                        <input type="color" id="secondary_color" name="secondary_color">
+                                        <input type="text" id="secondary_color_hex" class="color-hex-input" maxlength="7">
+                                    </div>
+                                </div>
+                                <div class="form-group color-picker-group">
+                                    <label for="background_color">Color de Fondo</label>
+                                    <div class="color-input-wrapper">
+                                        <input type="color" id="background_color" name="background_color">
+                                        <input type="text" id="background_color_hex" class="color-hex-input" maxlength="7">
+                                    </div>
+                                </div>
+                                <div class="form-group color-picker-group">
+                                    <label for="text_color">Color de Texto</label>
+                                    <div class="color-input-wrapper">
+                                        <input type="color" id="text_color" name="text_color">
+                                        <input type="text" id="text_color_hex" class="color-hex-input" maxlength="7">
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <h4>Estilos Modo Oscuro</h4>
+                            <div class="color-settings-grid">
+                                <div class="form-group color-picker-group">
+                                    <label for="primary_color_dark">Color Primario (Oscuro)</label>
+                                    <div class="color-input-wrapper">
+                                        <input type="color" id="primary_color_dark" name="primary_color_dark">
+                                        <input type="text" id="primary_color_dark_hex" class="color-hex-input" maxlength="7">
+                                    </div>
+                                </div>
+                                <div class="form-group color-picker-group">
+                                    <label for="secondary_color_dark">Color Secundario (Oscuro)</label>
+                                    <div class="color-input-wrapper">
+                                        <input type="color" id="secondary_color_dark" name="secondary_color_dark">
+                                        <input type="text" id="secondary_color_dark_hex" class="color-hex-input" maxlength="7">
+                                    </div>
+                                </div>
+                                <div class="form-group color-picker-group">
+                                    <label for="background_color_dark">Color de Fondo (Oscuro)</label>
+                                    <div class="color-input-wrapper">
+                                        <input type="color" id="background_color_dark" name="background_color_dark">
+                                        <input type="text" id="background_color_dark_hex" class="color-hex-input" maxlength="7">
+                                    </div>
+                                </div>
+                                <div class="form-group color-picker-group">
+                                    <label for="text_color_dark">Color de Texto (Oscuro)</label>
+                                    <div class="color-input-wrapper">
+                                        <input type="color" id="text_color_dark" name="text_color_dark">
+                                        <input type="text" id="text_color_dark_hex" class="color-hex-input" maxlength="7">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="font_family">Tipografía Principal</label>
+                                <select id="font_family" name="font_family">
+                                    <option value="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif">Fuente del Sistema (Por defecto)</option>
+                                    <option value="Georgia, serif">Georgia (Serif)</option>
+                                    <option value="monospace">Monospace</option>
+                                    <option value="Roboto, sans-serif">Roboto</option>
+                                    <option value="Open Sans, sans-serif">Open Sans</option>
+                                    <option value="Lato, sans-serif">Lato</option>
+                                    <option value="Montserrat, sans-serif">Montserrat</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="border_radius">Radio de Borde (px)</label>
+                                <input type="range" id="border_radius" name="border_radius" min="0" max="24" step="1">
+                                <span id="border-radius-value">8px</span>
+                            </div>
+                            <button type="submit">Guardar Configuración</button>
+                            <button type="button" id="restore-settings-btn" style="background-color: #6c757d; margin-left: 10px;">Restaurar por Defecto</button>
+                        </form>
+                    </fieldset>
+                </div>
+
+                <!-- Pestaña: Interacción -->
+                <div id="tab-comments" class="tab-pane">
+                    <fieldset>
+                        <legend>Interacción: Moderar Comentarios</legend>
+                        <div id="comments-moderation-list"></div>
+                    </fieldset>
+                </div>
+
+                <!-- Pestaña: Conexiones -->
+                <div id="tab-social" class="tab-pane">
+                    <fieldset>
+                        <legend>Conexiones: Gestionar Redes Sociales</legend>
+                        <div id="social-links-list" class="item-list"></div>
+                        <hr>
+                        <h3 id="social-link-form-title">Añadir Nuevo Enlace Social</h3>
+                        <form id="social-link-form">
+                            <input type="hidden" id="social-link-id">
+                            <div class="form-group">
+                                <label for="social-link-name">Nombre (ej. Facebook)</label>
+                                <input type="text" id="social-link-name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="social-link-url">URL Completa</label>
+                                <input type="url" id="social-link-url" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="social-link-icon">Clase del Icono (ej. fab fa-facebook)</label>
+                                <input type="text" id="social-link-icon" placeholder="fab fa-twitter" required>
+                            </div>
+                            <button type="submit" id="save-social-link-btn">Añadir Enlace</button>
+                            <button type="button" id="cancel-social-link-edit-btn" style="display: none; background-color: #6c757d;">Cancelar Edición</button>
+                        </form>
+                    </fieldset>
+                </div>
+
+                <!-- Pestaña: Usuarios -->
+                <div id="tab-users" class="tab-pane">
+                    <fieldset>
+                        <legend>Gestión de Usuarios</legend>
+                        <div id="users-list" class="item-list"></div>
+                        <hr>
+                        <h3 id="user-form-title">Añadir Nuevo Usuario</h3>
+                        <form id="user-form">
+                            <input type="hidden" id="user-id">
+                            <div class="form-group">
+                                <label for="user-name">Nombre</label>
+                                <input type="text" id="user-name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="user-email">Email</label>
+                                <input type="email" id="user-email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="user-password">Contraseña (dejar en blanco para no cambiar)</label>
+                                <input type="password" id="user-password">
+                            </div>
+                            <div class="form-group">
+                                <label for="user-role">Rol</label>
+                                <select id="user-role" required>
+                                    <option value="editor">Editor</option>
+                                    <option value="admin">Administrador</option>
+                                </select>
+                            </div>
+                            <button type="submit" id="save-user-btn">Añadir Usuario</button>
+                            <button type="button" id="cancel-user-edit-btn" style="display: none; background-color: #6c757d;">Cancelar Edición</button>
+                        </form>
+                    </fieldset>
+                </div>
+
+                <!-- Pestaña: Copias de Seguridad -->
+                <div id="tab-backups" class="tab-pane">
+                    <fieldset>
+                        <legend>Gestión de Copias de Seguridad</legend>
+                        <p>Crea y gestiona copias de seguridad de tu base de datos. Se recomienda descargar las copias regularmente y guardarlas en un lugar seguro.</p>
+                        <button id="create-backup-btn">Crear Nueva Copia de Seguridad</button>
+                        <hr>
+                        <h3>Copias de Seguridad Existentes</h3>
+                        <div id="backups-list" class="item-list"></div>
+                        <hr>
+                        <h3>Restaurar desde Copia de Seguridad</h3>
+                        <p><strong>¡Atención!</strong> Esta acción reemplazará todos los datos actuales de la base de datos con los del archivo de copia de seguridad. Esta operación es irreversible.</p>
+                        <form id="restore-backup-form">
+                            <input type="file" id="backup-file-input" accept=".sql" required>
+                            <button type="submit" id="restore-backup-btn" style="background-color: #dc3545;">Restaurar Base de Datos</button>
+                        </form>
+                        <div id="backups-list" class="item-list"></div>
+                    </fieldset>
+                </div>
+
+                <!-- Pestaña: SEO -->
+                <div id="tab-seo" class="tab-pane">
+                    <fieldset>
+                        <legend>Gestión de SEO</legend>
+                        <p>Configura los metadatos globales para mejorar el posicionamiento de tu sitio en los motores de búsqueda.</p>
+                        <form id="seo-settings-form">
+                            <div class="form-group">
+                                <label for="seo_meta_title">Meta Título Global</label>
+                                <input type="text" id="seo_meta_title" name="seo_meta_title" placeholder="El título que aparecerá en Google">
+                            </div>
+                            <div class="form-group">
+                                <label for="seo_meta_description">Meta Descripción Global</label>
+                                <textarea id="seo_meta_description" name="seo_meta_description" rows="3" placeholder="Una descripción corta y atractiva para los buscadores."></textarea>
+                            </div>
+                            <button type="submit">Guardar Configuración SEO</button>
+                        </form>
+                        <hr>
+                        <h3>Mapa del Sitio (Sitemap)</h3>
+                        <p>Genera un archivo `sitemap.xml` para ayudar a los motores de búsqueda a indexar tu sitio. Una vez generado, puedes verlo en <a href="/sitemap.xml" target="_blank">/sitemap.xml</a>.</p>
+                        <button id="generate-sitemap-btn">Generar/Actualizar Sitemap</button>
+                    </fieldset>
+                </div>
+
+                <!-- Pestaña: Email -->
+                <div id="tab-email" class="tab-pane">
+                    <fieldset>
+                        <legend>Configuración de Email (SMTP)</legend>
+                        <p>Configura los detalles de tu servidor de correo para enviar notificaciones y otros emails desde el sitio.</p>
+                        <form id="email-settings-form">
+                            <div class="form-group">
+                                <label for="smtp_host">Host SMTP</label>
+                                <input type="text" id="smtp_host" name="smtp_host" placeholder="smtp.example.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="smtp_port">Puerto SMTP</label>
+                                <input type="number" id="smtp_port" name="smtp_port" placeholder="587">
+                            </div>
+                            <div class="form-group">
+                                <label for="smtp_secure">Conexión Segura (TLS)</label>
+                                <input type="checkbox" id="smtp_secure" name="smtp_secure" checked>
+                            </div>
+                            <div class="form-group">
+                                <label for="smtp_user">Usuario SMTP</label>
+                                <input type="text" id="smtp_user" name="smtp_user">
+                            </div>
+                            <div class="form-group">
+                                <label for="smtp_pass">Contraseña SMTP</label>
+                                <input type="password" id="smtp_pass" name="smtp_pass">
+                            </div>
+                            <hr>
+                            <button type="submit">Guardar Configuración de Email</button>
+                        </form>
+                        <hr>
+                        <h3>Probar Configuración</h3>
+                        <p>Envía un email de prueba a tu propia dirección de correo para verificar que la configuración funciona.</p>
+                        <button id="send-test-email-btn">Enviar Email de Prueba</button>
+                    </fieldset>
+                </div>
+
+                <!-- Pestaña: Caché -->
+                <div id="tab-cache" class="tab-pane">
+                    <fieldset>
+                        <legend>Gestión de Caché</legend>
+                        <p>Limpia la caché del servidor para forzar la recarga de datos. Esto es útil si los cambios no se reflejan inmediatamente en el sitio público.</p>
+                        <div class="cache-actions">
+                            <button id="clear-all-cache-btn" style="background-color: #dc3545;">Limpiar Toda la Caché</button>
+                            <button id="clear-menu-cache-btn">Limpiar Caché del Menú</button>
+                            <button id="clear-settings-cache-btn">Limpiar Caché de Configuración</button>
+                            <button id="clear-content-cache-btn">Limpiar Caché de Contenido</button>
+                        </div>
+                        <p id="cache-status" style="margin-top: 1rem;"></p>
+                    </fieldset>
+                </div>
+
+                <!-- Pestaña: Internacionalización (i18n) -->
+                <div id="tab-i18n" class="tab-pane">
+                    <fieldset>
+                        <legend>Gestión de Idiomas y Traducciones</legend>
+                        <p>Añade o elimina los idiomas soportados por tu sitio.</p>
+                        <div id="languages-list" class="item-list"></div>
+                        <form id="add-language-form" class="form-inline">
+                            <input type="text" id="lang-code-input" placeholder="Código (ej: en)" required>
+                            <input type="text" id="lang-name-input" placeholder="Nombre (ej: English)" required>
+                            <button type="submit">Añadir Idioma</button>
+                        </form>
+                    </fieldset>
+                    <fieldset>
+                        <legend>Editar Traducciones</legend>
+                        <p>Selecciona un idioma para ver y editar sus traducciones.</p>
+                        <div class="form-group">
+                            <label for="select-language-for-translation">Idioma:</label>
+                            <select id="select-language-for-translation"></select>
+                        </div>
+                        <form id="translations-form">
+                            <div id="translations-container"></div>
+                            <button type="submit" id="save-translations-btn" style="display: none;">Guardar Traducciones</button>
+                        </form>
+                    </fieldset>
+                </div>
+
+                <!-- Pestaña: Registro de Actividad -->
+                <div id="tab-activity-log" class="tab-pane">
+                    <fieldset>
+                        <legend>Registro de Actividad del Sistema</legend>
+                        <p>Aquí se muestran las acciones importantes realizadas por los usuarios en el panel de administración.</p>
+                        <div id="activity-log-list"></div>
+                        <div id="activity-log-pagination" class="pagination-controls"></div>
+                    </fieldset>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- El script principal del panel va al final -->
+    <script type="module" src="admin.js"></script>
+    <script src="https://cdn.tiny.cloud/1/8vjc50sbxdjpqpkauhynfpx8m265bugh133hhzqofqlv1kai/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+</body>
+</html>

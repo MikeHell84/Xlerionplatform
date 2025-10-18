@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cargando...</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato&family=Montserrat&family=Open+Sans&family=Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <!-- Estilos base que pueden ser sobreescritos por la configuración de la API -->
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --background-color: #ffffff;
+            --text-color: #212529;
+            --border-radius: 8px;
+        }
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+        [data-theme="dark"] {
+            --primary-color: var(--primary-color-dark);
+            --secondary-color: var(--secondary-color-dark);
+            --background-color: var(--background-color-dark);
+            --text-color: var(--text-color-dark);
+        }
+        /* Agrega más estilos base aquí */
+    </style>
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="container header-container">
+            <img id="site-logo" src="" alt="Logo" style="max-height: 50px;">
+            <nav id="main-nav">
+                <ul id="main-menu">
+                    <!-- El menú se generará aquí -->
+                </ul>
+                <button id="theme-toggle" class="theme-toggle-btn" aria-label="Cambiar tema">
+                    <i class="fas fa-moon"></i>
+                    <i class="fas fa-sun"></i>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- La sección Hero ahora está fuera del contenido principal para que no se reemplace -->
+    <section id="hero-section" class="hero-section">
+        <div class="container">
+            <h1 id="hero-title">Bienvenido</h1>
+            <p id="hero-subtitle">Contenido increíble está por venir.</p>
+        </div>
+    </section>
+
+    <main id="main-content" class="container"></main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p id="footer-text">&copy; 2024</p>
+            <div class="social-links"></div>
+        </div>
+    </footer>
+
+    <script src="/assets/js/main.js"></script>
+</body>
+</html>

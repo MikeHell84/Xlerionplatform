@@ -1,0 +1,71 @@
+===========================================================
+ CHECKLIST DE DESARROLLO - FLUJO DE TRABAJO
+===========================================================
+
+Usa esta guía como una lista de verificación rápida para iniciar el
+entorno de desarrollo del proyecto "Ultimate Website".
+
+---
+**1. PRERREQUISITOS**
+---
+
+*   [ ] **VS Code Instalado:** Con la extensión "Live Server".
+*   [ ] **Node.js Instalado:** Verifica con `node -v`.
+*   [ ] **Servidor MySQL/MariaDB:** Asegúrate de que esté en ejecución.
+*   [ ] **live-server (npm):** Instálalo globalmente con `npm install -g live-server`.
+*   [ ] **Ollama (Opcional):** Si vas a usar la IA, asegúrate de que el servicio esté corriendo.
+
+
+---
+**2. INICIAR EL BACKEND (API)**
+---
+
+1.  **Abrir Terminal en VS Code:**
+    *   Ve a `Terminal > Nueva Terminal`.
+
+2.  **Navegar a la Carpeta del Backend:**
+    ```bash
+    cd backend
+    ```
+
+3.  **Verificar Dependencias (solo la primera vez):**
+    *   Si es la primera vez que clonas el proyecto, ejecuta:
+    ```bash
+    npm install
+    ```
+
+4.  **Iniciar el Servidor:**
+    ```bash
+    node server.js
+    ```
+    *   **Resultado esperado:** Verás el mensaje `🚀 Servidor corriendo en http://localhost:3000` en la terminal. Deja esta terminal abierta.
+
+
+---
+**3. INICIAR EL FRONTEND (CON LIVE-SERVER)**
+---
+
+1.  **Abrir una SEGUNDA Terminal en VS Code:**
+    *   Ve a `Terminal > Nueva Terminal`.
+
+2.  **Navegar a la Carpeta del Frontend:**
+    ```bash
+    cd frontend
+    ```
+
+3.  **Iniciar Live Server:**
+    *   Ejecuta el siguiente comando. Este iniciará un servidor en el puerto `8080` y abrirá tu navegador automáticamente.
+    ```bash
+    live-server --port=8080 --no-browser
+    ```
+    *   **Accede al sitio en:** `http://localhost:8080`
+    *   **Resultado esperado:** Se cargará la página principal. Ahora, cada vez que guardes un cambio en un archivo de la carpeta `/frontend`, el navegador se recargará automáticamente.
+
+---
+**4. ACCEDER AL PANEL DE ADMINISTRACIÓN (EN DESARROLLO)**
+---
+
+*   Con `live-server` corriendo, simplemente navega a: `http://localhost:8080/admin/`
+
+
+**¡LISTO!** Con el backend corriendo en una terminal y el frontend en Live Server, tienes el entorno de desarrollo completo y funcionando.

@@ -1,0 +1,66 @@
+/* frontend/admin/css/tabs.css */
+
+/* --- Navegación por Pestañas --- */
+.tab-pane {
+    display: none;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+.dashboard-nav a {
+    display: block;
+    padding: 0.75rem 1rem;
+    text-decoration: none;
+    color: #333;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.dashboard-nav a.active {
+    background-color: #007bff;
+    color: white;
+}
+
+body.dark-mode .dashboard-nav a {
+    color: #e9ecef;
+}
+
+/* --- Submenú de la Pestaña de Contenido --- */
+.content-subnav {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    margin-bottom: 2rem;
+    border: 1px solid #dee2e6;
+}
+
+body.dark-mode .content-subnav {
+    background-color: #2c2c2e;
+    border-color: #495057;
+}
+
+#content-section-menu {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+#content-section-menu a {
+    text-decoration: none;
+    background-color: #e9ecef;
+    color: #343a40;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+#content-section-menu a:hover, #content-section-menu a.active {
+    background-color: var(--primary-color);
+    color: white;
+}
